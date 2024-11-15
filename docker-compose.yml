@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  webui:
+    image: ghcr.io/open-webui/open-webui:git-09a81eb
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      - ./open-webui-local:/app/backend/data
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    pull_policy: always
+    ports:
+      - '11434:11434'
+    volumes:
+      - ./model_files:/model_files
+    tty: true
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    ports:
+      - '5678:5678'
+    volumes:
+      - ./n8n-data:/home/node/.n8n
