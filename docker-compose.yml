@@ -1,15 +1,13 @@
 version: '3.9'
 
 services:
-  webui:
-    image: ghcr.io/open-webui/open-webui:git-09a81eb
-    restart: always
-    ports:
-      - "8080:8080"
+  db:
+    image: postgres:16.4-alpine
+    container_name: postgres-n8n
     environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
-    volumes:
-      - ./open-webui-local:/app/backend/data
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_URL=jdbc:postgresql://localhost:5432/n8n
 
   ollama:
     image: ollama/ollama:latest
@@ -27,3 +25,12 @@ services:
       - '5678:5678'
     volumes:
       - ./n8n-data:/home/node/.n8n
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+    profiles:
+      - local
